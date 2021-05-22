@@ -1,35 +1,78 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
-import {fetchJSON, articlesRoute, sourcesRoute} from './config';
+import {fetchJSON, articlesRoute, sourceRoute} from './config';
+import Headline from './src/Headline';
 import headlines from './data/headlines';
+import SourceSelector from './src/SourceSelector';
+import {Picker} from '@react-native-community/picker';
 
 // 67752668abc440628948a2c544e6cfb9
 
 // expo init foldername
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.toolbar}>
-        <View style={styles.toolBarThird}>
-          <Text>First</Text>
+export default class App extends React.Component {
+  constructor()
+  {
+    super();
+    this.state = {
+      sources: [],
+      sourceItems: [],
+    }
+  }
+
+  componentDidMount()
+  {
+    fetchJSON(sourceRoute)
+    .then(({sources}) => {
+      this.setState({sources}, () => {
+        this.createPickerItems();
+      });
+    })
+  }
+
+  createPickerItems = () => {
+    this.setState({
+      sourceItems: this.state.sources.map((source) => {
+        return <Picker.Item 
+        key={`source_${source.id}`}
+        label={source.name}
+        value={source.id} />
+      })
+    })
+  }
+
+  render() {
+
+    return(
+      <View style={styles.container}>
+        <View style={styles.toolbar}>
+          <View style={styles.toolBarThird}>
+            <Text>First</Text>
+          </View>
+          <View style={[styles.toolBarThird, styles.toolBarIcons]}>
+            <TinyIcon title="Home" />
+            <TinyIcon title="Meetings" />
+            <TinyIcon title="Contacts" />
+          </View>
+          <View style={[styles.toolBarThird, {textAlign: 'right'}]}>
+            <Text>Third</Text>
+          </View>
         </View>
-        <View style={[styles.toolBarThird, styles.toolBarIcons]}>
-          <TinyIcon title="Home" />
-          <TinyIcon title="Meetings" />
-          <TinyIcon title="Contacts" />
+        <View style={styles.contentArea}>
+          <Text>Open up App.js to start working on your app!</Text>
+          <SourceSelector sources={this.state.sources}>
+            {this.state.sourceItems}
+          </SourceSelector>
+          <Headline {...headlines.articles[0]} />
         </View>
-        <View style={[styles.toolBarThird, {textAlign: 'right'}]}>
-          <Text>Third</Text>
-        </View>
+        <StatusBar style="auto" />
       </View>
-      <View style={styles.contentArea}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
-      <StatusBar style="auto" />
-    </View>
-  );
+    );
+  }
+
+
+
 }
 
 const TinyIcon = (props) => {

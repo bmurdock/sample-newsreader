@@ -3,6 +3,7 @@ export const baseRoute = `https://newsapi.org/v2`;
 export const sourceRoute = `${baseRoute}/sources?apiKey=${apiKey}&language=en&country=us`
 export const articlesRoute = `${baseRoute}/top-headlines?country=us&apiKey=${apiKey}`;
 
+// we want to make this asynchronous
 export const fetchJSON = async (route) =>
 {
     if (typeof route !== 'string' && route !== '') {
