@@ -26,16 +26,29 @@ export default class App extends React.Component {
   {
     fetchJSON(sourceRoute)
     .then(({sources}) => {
-      this.setState({sources}, () => {
-        this.createPickerItems();
-      });
-    })
-    .then(() => {
       readArticles(true)
       .then((articles) =>
       {
         console.log('articles were: ', articles);
+        articles = articles.filter((art) => {
+          return (typeof article.source.id === 'string' && article.source.id !== '')
+        });
+        // create a unique set of source IDs from my articles
+        const articleIds = new Set();
+        // loop through articles
+        articles.forEach((art) => {
+          // add the article source ID to my set
+          articleIds.add(art.source.id);
+        })
         this.setState({articles: articles});
+        // filter my sources to make sure that they actually have articles
+        sources = sources.filter((src) => {
+          // if my source has articles that use it, this will return true
+          return articleIds.has(src.id);
+        });
+        this.setState({sources}, () => {
+          this.createPickerItems();
+        });
       })
     })
   }
