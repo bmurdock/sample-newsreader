@@ -7,9 +7,6 @@ import headlines from './data/headlines';
 import SourceSelector from './src/SourceSelector';
 import {Picker} from '@react-native-community/picker';
 
-// 67752668abc440628948a2c544e6cfb9
-
-// expo init foldername
 
 export default class App extends React.Component {
   constructor()
