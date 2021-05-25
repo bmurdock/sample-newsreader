@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import { View, Image, Text, StyleSheet, Button, Linking } from 'react-native';
 export default function Headline(props) {
     console.log('props: ', props);
-
+    const handlePress = () => {
+        console.log('Attemping to open link.');
+        Linking.openURL(props.url);
+    }
     return (
         <View style={styles.container}>
             <Image
@@ -13,6 +16,10 @@ export default function Headline(props) {
             />
             <Text style={styles.headline}>{props.title}</Text>
             <Text>{props.description}</Text>
+            <Button 
+                title="Open In Browser"
+                onPress={handlePress}
+            />
         </View>
     )
 }

@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput } from 'react-native';
 import {fetchJSON, articlesRoute, sourceRoute} from './config';
 import Headline from './src/Headline';
 import headlines from './data/headlines';
 import SourceSelector from './src/SourceSelector';
 import {Picker} from '@react-native-community/picker';
+import { readData, writeData, readArticles} from './util';
 
 
 export default class App extends React.Component {
@@ -15,6 +16,9 @@ export default class App extends React.Component {
     this.state = {
       sources: [],
       sourceItems: [],
+      username: '',
+      test: [],
+      articles: [],
     }
   }
 
@@ -25,6 +29,14 @@ export default class App extends React.Component {
       this.setState({sources}, () => {
         this.createPickerItems();
       });
+    })
+    .then(() => {
+      readArticles(true)
+      .then((articles) =>
+      {
+        console.log('articles were: ', articles);
+        this.setState({articles: articles});
+      })
     })
   }
 
@@ -39,11 +51,34 @@ export default class App extends React.Component {
     })
   }
 
+  setUserName = (value) => {
+    writeData('username', value)
+    .then((result) => {
+      if (result === true){
+        this.setState({username: value});
+      }
+      else
+      {
+        console.log('We had a problem: ', result);
+      }
+    })
+  }
+
+  getTestData = () => {
+    readData('test')
+    .then((data) => {
+      this.setState({
+        test: data,
+      })
+    })
+  }
+
   render() {
 
     return(
       <View style={styles.container}>
         <View style={styles.toolbar}>
+
           <View style={styles.toolBarThird}>
             <Text>First</Text>
           </View>
@@ -57,11 +92,18 @@ export default class App extends React.Component {
           </View>
         </View>
         <View style={styles.contentArea}>
+          <View>
+            <TextInput 
+              value={this.state.username}
+              onChangeText={this.setUserName}
+            />
+            <Text>Hello {this.state.username}.</Text>
+          </View>
           <Text>Open up App.js to start working on your app!</Text>
           <SourceSelector sources={this.state.sources}>
             {this.state.sourceItems}
           </SourceSelector>
-          <Headline {...headlines.articles[0]} />
+          <Headline {...this.state.articles[0]} />
         </View>
         <StatusBar style="auto" />
       </View>
