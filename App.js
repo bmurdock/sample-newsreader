@@ -22,6 +22,17 @@ export default class App extends React.Component {
     }
   }
 
+  // we want to get articles that match a specific source
+  getArticleBySource = (sourceId) => {
+    // do i set a state? or do i return a filtered array?
+
+    // this example returns the filtered array
+    return this.state.articles.filter((art) =>
+    {
+      return art.source.id === sourceId;
+    })
+  }
+
   componentDidMount()
   {
     fetchJSON(sourceRoute)
@@ -31,7 +42,7 @@ export default class App extends React.Component {
       {
         console.log('articles were: ', articles);
         articles = articles.filter((art) => {
-          return (typeof article.source.id === 'string' && article.source.id !== '')
+          return (typeof art.source.id === 'string' && art.source.id !== '')
         });
         // create a unique set of source IDs from my articles
         const articleIds = new Set();
@@ -113,7 +124,7 @@ export default class App extends React.Component {
             <Text>Hello {this.state.username}.</Text>
           </View>
           <Text>Open up App.js to start working on your app!</Text>
-          <SourceSelector sources={this.state.sources}>
+          <SourceSelector sources={this.state.sources} handler={this.getArticleBySource}>
             {this.state.sourceItems}
           </SourceSelector>
           <Headline {...this.state.articles[0]} />
